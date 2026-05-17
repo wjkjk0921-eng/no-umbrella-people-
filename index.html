@@ -205,13 +205,14 @@
             50% { transform: translate(6px, -8px); }
         }
 
+        /* [優化] 補上 filter 讓 JS 發光特效淡入淡出更平滑 */
         .cover-frame img {
             position: relative;
             z-index: 1;
             width: 100%;
             border-radius: 4px;
             box-shadow: 0 30px 60px rgba(42, 37, 32, 0.18);
-            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            transition: transform 0.5s ease, box-shadow 0.5s ease, filter 0.5s ease;
         }
 
         .cover-frame:hover img {
@@ -286,6 +287,13 @@
         }
 
         /* ── 介紹區 ── */
+        /* [優化] 直接在 CSS 定位初始狀態，防止網頁載入時慢半拍閃爍 */
+        .about, .listen, footer {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
         .about {
             position: relative;
             z-index: 1;
@@ -536,9 +544,9 @@
                 order: 1;
             }
             
-            /* [重點修改] 加大上方的 padding，把圖片與文字的距離拉開 */
+            /* [拉開手機間距] 保持圖片與【聲音·陪伴·記錄】的完美白邊 */
             .hero-left {
-                padding: 40px 24px 60px; /* 原本是 0px 24px 60px，將上方間距改為 40px */
+                padding: 40px 24px 60px; 
                 text-align: center;
                 align-items: center;
                 order: 2;
@@ -639,7 +647,7 @@
                 仍然向前。
             </p>
 
-            <a href="https://open.spotify.com/show/033emM6owszArA4Kjkj4q5" target="_blank" class="hero-cta fade-up">
+            <a href="https://open.spotify.com" target="_blank" class="hero-cta fade-up">
                 <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
                 立即收聽
             </a>
@@ -697,7 +705,7 @@
         </div>
 
         <div class="platform-grid">
-            <a href="https://open.spotify.com/show/033emM6owszArA4Kjkj4q5#main-view" target="_blank" class="platform-btn">
+            <a href="https://open.spotify.com" target="_blank" class="platform-btn">
                 <div>
                     <div class="platform-name">Spotify</div>
                 </div>
@@ -715,7 +723,7 @@
                 </div>
             </a>
 
-            <a href="https://podcasts.apple.com/podcast/1896656527" target="_blank" class="platform-btn">
+            <a href="https://podcasts.apple.com/tw/podcast/id1896656527" target="_blank" class="platform-btn">
                 <div>
                     <div class="platform-name">Apple Podcasts</div>
                 </div>
@@ -759,7 +767,7 @@
             });
         });
 
-        /* 2. scroll 淡入動畫 */
+        /* 2. scroll 淡入動畫 [已移除了初始化隱藏，避免 DOM 載入延遲造成的閃爍] */
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
@@ -770,9 +778,6 @@
         }, { threshold: 0.1 });
 
         document.querySelectorAll('.about, .listen, footer').forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(24px)';
-            el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             observer.observe(el);
         });
 
