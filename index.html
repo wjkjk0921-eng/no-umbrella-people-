@@ -33,6 +33,13 @@
             overflow-x: hidden;
         }
 
+        /* 確保所有圖片都能響應式縮放 */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
         /* ── 雨紋背景紋理 ── */
         body::before {
             content: '';
@@ -140,6 +147,7 @@
         .hero-cta {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
             margin-top: 8px;
             padding: 14px 32px;
@@ -171,14 +179,21 @@
 
         .cover-frame {
             position: relative;
-            width: 340px;
+            width: 100%;
+            max-width: 420px;
+            padding: 0 20px;
+        }
+
+        .about .cover-frame {
+            margin-top: 32px;
+            padding: 0;
         }
 
         .cover-frame::before {
             content: '';
             position: absolute;
-            top: -20px; left: -20px;
-            width: 100%; height: 100%;
+            top: -15px; left: 5px;
+            width: calc(100% - 40px); height: 100%;
             border: 1px solid var(--rule);
             border-radius: 4px;
             z-index: 0;
@@ -196,7 +211,6 @@
             width: 100%;
             border-radius: 4px;
             box-shadow: 0 30px 60px rgba(42, 37, 32, 0.18);
-            display: block;
             transition: transform 0.5s ease, box-shadow 0.5s ease;
         }
 
@@ -304,6 +318,31 @@
             font-weight: 500;
         }
 
+        /* 專門給介紹區的清單排版 */
+        .about-list {
+            list-style: none;
+            margin-bottom: 24px;
+            padding-left: 4px;
+        }
+        
+        .about-list li {
+            position: relative;
+            font-size: 1.05rem;
+            color: var(--ink-light);
+            line-height: 2;
+            font-weight: 500;
+            padding-left: 20px;
+            margin-bottom: 4px;
+        }
+
+        .about-list li::before {
+            content: '・';
+            position: absolute;
+            left: 0;
+            color: var(--rust);
+            font-weight: bold;
+        }
+
         .blockquote {
             position: relative;
             padding: 24px 28px;
@@ -361,15 +400,6 @@
             background: var(--rule);
         }
 
-        .listen-heading {
-            font-family: 'Noto Serif TC', serif;
-            font-size: 1.8rem;
-            font-weight: 600;
-            letter-spacing: 3px;
-            margin-bottom: 48px;
-            color: var(--ink);
-        }
-
         .platform-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -402,24 +432,19 @@
             transition: transform 0.3s ease;
         }
 
-        .platform-btn:hover {
+        .platform-btn:hover, .platform-btn:active {
             border-color: var(--rust-light);
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(155, 98, 69, 0.12);
         }
-        .platform-btn:hover::before { transform: scaleY(1); }
+        .platform-btn:hover::before, .platform-btn:active::before { 
+            transform: scaleY(1); 
+        }
 
         .platform-name {
             font-family: 'Noto Serif TC', serif;
             font-size: 1rem;
             letter-spacing: 1px;
-        }
-
-        .platform-sub {
-            font-size: 0.72rem;
-            color: var(--mist);
-            letter-spacing: 1px;
-            margin-top: 2px;
         }
 
         .platform-icon {
@@ -431,8 +456,9 @@
             align-items: center;
             justify-content: center;
             transition: background 0.3s;
+            flex-shrink: 0;
         }
-        .platform-btn:hover .platform-icon {
+        .platform-btn:hover .platform-icon, .platform-btn:active .platform-icon {
             background: rgba(155,98,69,0.12);
         }
         .platform-icon svg {
@@ -484,34 +510,92 @@
         .fade-up:nth-child(4) { animation-delay: 0.55s; }
         .fade-up:nth-child(5) { animation-delay: 0.7s; }
 
-        /* ── RWD ── */
+        /* =========================================
+           ✨ RWD 響應式佈局 (平板與手機適應) ✨
+           ========================================= */
+        @media (max-width: 900px) {
+            .about {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
         @media (max-width: 768px) {
             header { padding: 16px 24px; }
+            
             .hero {
                 grid-template-columns: 1fr;
                 min-height: auto;
             }
+            
+            .hero-right {
+                height: auto;
+                min-height: auto;
+                padding-top: 100px;
+                padding-bottom: 20px;
+                order: 1;
+            }
+            
+            /* [重點修改] 加大上方的 padding，把圖片與文字的距離拉開 */
             .hero-left {
-                padding: 120px 24px 40px;
+                padding: 40px 24px 60px; /* 原本是 0px 24px 60px，將上方間距改為 40px */
                 text-align: center;
                 align-items: center;
+                order: 2;
             }
+            
             .hero-sub { max-width: none; }
             .hero-eyebrow { justify-content: center; }
-            .hero-right {
-                height: 55vw;
-                min-height: 280px;
+            .hero-cta { align-self: center; } 
+            
+            .cover-frame {
+                width: 80vw;
+                max-width: 320px;
+                padding: 0;
             }
-            .cover-frame { width: 55vw; max-width: 260px; }
+            .cover-frame::before {
+                top: -10px; left: 10px;
+                width: 100%;
+            }
             .cover-watermark { display: none; }
+            
             .divider { padding: 0 24px; }
             .about {
                 grid-template-columns: 1fr;
                 gap: 32px;
                 padding: 0 24px 80px;
             }
+            
             .listen { padding: 60px 24px; }
-            .platform-grid { grid-template-columns: 1fr; }
+            
+            .platform-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 12px;
+            }
+
+            .platform-btn {
+                padding: 20px 10px; 
+                flex-direction: column-reverse; 
+                justify-content: center;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .platform-btn::before {
+                width: 100%; height: 3px;
+                left: 0; top: auto; bottom: 0;
+                transform: scaleX(0);
+                transform-origin: center;
+                transition: transform 0.3s ease;
+            }
+            .platform-btn:hover::before, .platform-btn:active::before { 
+                transform: scaleX(1); 
+            }
+
+            .platform-name {
+                font-size: 0.85rem; 
+            }
+            
             footer {
                 flex-direction: column;
                 gap: 12px;
@@ -519,17 +603,28 @@
                 padding: 40px 24px;
             }
         }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2.2rem; }
+            .about-heading { font-size: 1.4rem; }
+            
+            .about-body p, .about-list li {
+                font-size: 0.95rem; 
+                letter-spacing: -0.2px;
+            }
+
+            .blockquote { padding: 20px 16px; }
+            .blockquote::before { left: 10px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 頁首 -->
     <header>
         <span class="header-logo">沒撐傘的人</span>
         <span class="header-tag">Podcast · 2026</span>
     </header>
 
-    <!-- HERO -->
     <section class="hero">
         <div class="hero-left">
             <div class="hero-eyebrow fade-up">聲音 · 陪伴 · 記錄</div>
@@ -557,38 +652,38 @@
                 <div class="rain-drop"></div>
                 <div class="rain-drop"></div>
             </div>
-            <div class="cover-frame" style="width: 420px; max-width: 100%;">
+            <div class="cover-frame">
                 <img src="pc.jpg" alt="沒撐傘的人 Podcast 封面圖" />
             </div>
         </div>
     </section>
     
-    <!-- 分隔 -->
     <div class="divider">
         <span class="divider-text">關於這個頻道</span>
     </div>
 
-    <!-- 介紹 -->
     <section class="about">
         <div>
             <h2 class="about-heading">
                 為什麼我們
                 <span class="underline-rust">不撐傘</span>？
             </h2>
-            <div class="cover-frame" style="margin-top: 32px; width: 420px; max-width: 100%;">
+            <div class="cover-frame">
                 <img src="open.png" alt="open" />
             </div>
         </div>
         <div class="about-body">
             <p>我們將邀請不同領域的「沒撐傘的人」，分享他們如何在冷冽的現實中，跑出屬於自己的溫暖軌跡。聽他們的人生故事，也聽他們在雨過天晴後的笑聲。</p>
             <p>我們的Podcast 沒什麼高深理論，更不想餵你無用的安慰。這只是 Angelina ＆ Fish 和夥伴們的平凡人對話，記錄著我們如何從徬徨到站穩腳步。</p>
-            <p>我們想陪你聊聊：
-<br>・沒資源的普通人，在職場夾縫中如何應付內耗。
-<br>・二十多歲的集體迷惘、職涯卡關與自我探索。
-<br>・那些在現實碰壁後，才揉捏出來的生活轉念。</p>     
+            <p>我們想陪你聊聊：</p>
+            
+            <ul class="about-list">
+                <li>沒資源的普通人，在職場夾縫中如何應付內耗。</li>
+                <li>二十多歲的集體迷惘、職涯卡關與自我探索。</li>
+                <li>那些在現實碰壁後，才揉捏出來的生活轉念。</li>
+            </ul>
 
-
-<p>這是一場關於我們的人生實驗。即便全身濕透，只要有人並肩，這場暴雨好像也沒那麼可怕了。</p>
+            <p>這是一場關於我們的人生實驗。即便全身濕透，只要有人並肩，這場暴雨好像也沒那麼可怕了。</p>
             
             <div class="blockquote">
                 <p>即便濕透，我們還是要一起向前走。</p>
@@ -596,54 +691,42 @@
         </div>
     </section>
 
-    <!-- 收聽平台 -->
     <section class="listen">
         <div class="section-label">
             <span class="section-label-text">選擇你的收聽方式</span>
         </div>
 
-        
-
         <div class="platform-grid">
-
-            <!-- Spotify -->
             <a href="https://open.spotify.com/show/033emM6owszArA4Kjkj4q5#main-view" target="_blank" class="platform-btn">
                 <div>
                     <div class="platform-name">Spotify</div>
-                    <div class="platform-sub"></div>
                 </div>
                 <div class="platform-icon">
                     <span class="material-symbols-outlined">graphic_eq</span>
                 </div>
             </a>
 
-            <!-- SoundOn -->
             <a href="https://player.soundon.fm/p/fbb1dd04-ad05-4580-8d2f-f56c7052793b/episodes/2f7317b7-399d-4668-be6c-f992ac8e5818" target="_blank" class="platform-btn">
                 <div>
                     <div class="platform-name">SoundOn</div>
-                    <div class="platform-sub"></div>
                 </div>
                 <div class="platform-icon">
                     <span class="material-symbols-outlined">mic</span>
                 </div>
             </a>
 
-            <!-- Apple Podcasts -->
-            <a href="#" target="_blank" class="platform-btn">
+            <a href="https://podcasts.apple.com/podcast/1896656527" target="_blank" class="platform-btn">
                 <div>
                     <div class="platform-name">Apple Podcasts</div>
-                    <div class="platform-sub"></div>
                 </div>
                 <div class="platform-icon">
                     <span class="material-symbols-outlined">podcasts</span>
                 </div>
             </a>
 
-            <!-- KKBOX -->
             <a href="https://podcast.kkbox.com/tw/channel/WnJcfORm6BUm2Jxu1_" target="_blank" class="platform-btn">
                 <div>
                     <div class="platform-name">KKBOX Podcast</div>
-                    <div class="platform-sub"></div>
                 </div>
                 <div class="platform-icon">
                     <span class="material-symbols-outlined">music_note</span>
@@ -653,14 +736,13 @@
         </div>
     </section>
 
-    <!-- 頁腳 -->
     <footer>
         <div class="footer-logo">沒撐傘的人</div>
         <div class="footer-note"> 2026 · 努力前行中</div>
     </footer>
 
     <script>
-        /* 封面圖光暈 hover */
+        /* 1. 封面圖光暈 (支援電腦滑鼠與手機觸控) */
         document.querySelectorAll('.cover-frame img').forEach(img => {
             img.addEventListener('mouseenter', () => {
                 img.style.filter = 'brightness(1.06) drop-shadow(0 0 20px rgba(180,120,80,0.3))';
@@ -668,9 +750,16 @@
             img.addEventListener('mouseleave', () => {
                 img.style.filter = '';
             });
+
+            img.addEventListener('touchstart', () => {
+                img.style.filter = 'brightness(1.06) drop-shadow(0 0 20px rgba(180,120,80,0.3))';
+            });
+            img.addEventListener('touchend', () => {
+                img.style.filter = '';
+            });
         });
 
-        /* scroll 淡入 */
+        /* 2. scroll 淡入動畫 */
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
@@ -686,6 +775,9 @@
             el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             observer.observe(el);
         });
+
+        /* 3. 喚醒 iOS 手機的按鈕觸控回饋 */
+        document.body.addEventListener('touchstart', function() {}, {passive: true});
     </script>
 
 </body>
